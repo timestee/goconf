@@ -61,7 +61,7 @@ func (c *Config) ValidateAndPanic(opts interface{}) *Config {
 	return c
 }
 
-// -- globalConfig
+// -- GlobalConfig
 func NewConfig(name string, errorHandling flag.ErrorHandling) *Config {
 	return &Config{
 		FS: flag.NewFlagSet(name, errorHandling),
@@ -69,20 +69,20 @@ func NewConfig(name string, errorHandling flag.ErrorHandling) *Config {
 	}
 }
 
-var globalConfig = NewConfig(os.Args[0], flag.ExitOnError)
+var GlobalConfig = NewConfig(os.Args[0], flag.ExitOnError)
 
 func GenTemplate(opts interface{}, fname string) error {
-	return globalConfig.GenTemplate(opts, fname)
+	return GlobalConfig.GenTemplate(opts, fname)
 }
 
 func Resolve(opts interface{}, files ...string) *Config {
-	return globalConfig.Resolve(opts, files, false)
+	return GlobalConfig.Resolve(opts, files, false)
 }
 
 func ResolveAutoFlag(opts interface{}, files ...string) *Config {
-	return globalConfig.Resolve(opts, files, true)
+	return GlobalConfig.Resolve(opts, files, true)
 }
 
 func ValidateAndPanic(ops interface{}) *Config {
-	return globalConfig.ValidateAndPanic(ops)
+	return GlobalConfig.ValidateAndPanic(ops)
 }
