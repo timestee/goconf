@@ -1,3 +1,15 @@
+// Package gonconf provides a simple conf loader support multiple sources
+//
+// Read configuration automatically based on the given struct's field name.
+// Load configuration from multiple sources
+// multiple file inherit
+//
+// Values are resolved with the following priorities (lowest to highest):
+// 1. Options struct default value
+// 2. Flags default value
+// 3. Config file value, TOML or JSON file
+// 4. Command line flag
+
 package goconf
 
 import (
@@ -13,18 +25,21 @@ type AutoOptions struct {
 	AutoDirRunning string `flag:"_auto_dir_running_"`
 }
 
+// Config represents a configuration loader
 type Config struct {
 	FS  *flag.FlagSet
 	FL  *FileLoader
-	ops interface{}
 }
 
+// Gen template conf file base on the given struct and save the conf to file.
 func (c *Config) GenTemplate(opts interface{}, fname string) error {
 	var tomap map[string]interface{} = make(map[string]interface{})
 	innserResolve(opts, nil, nil, tomap, false)
 	return genTemplate(tomap, fname)
 }
 
+// read configuration automatically based on the given struct's field name,
+// load configs from struct field's default value, muitiple files and cmdline flags.
 func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) *Config {
 	// auto flag with default value
 	if autlflag {
@@ -54,6 +69,7 @@ func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) *Confi
 	return c
 }
 
+// validate the configs and dump it as json string
 func (c *Config) ValidateAndPanic(opts interface{}) *Config {
 	fmt.Println("[Config]")
 	b, _ := json.MarshalIndent(opts, "", "   ")
@@ -61,7 +77,6 @@ func (c *Config) ValidateAndPanic(opts interface{}) *Config {
 	return c
 }
 
-// -- GlobalConfig
 func NewConfig(name string, errorHandling flag.ErrorHandling) *Config {
 	return &Config{
 		FS: flag.NewFlagSet(name, errorHandling),
@@ -69,20 +84,26 @@ func NewConfig(name string, errorHandling flag.ErrorHandling) *Config {
 	}
 }
 
+// GlobalConfig
 var GlobalConfig = NewConfig(os.Args[0], flag.ExitOnError)
 
+// Gen template conf file base on the given struct and save the conf to file.
 func GenTemplate(opts interface{}, fname string) error {
 	return GlobalConfig.GenTemplate(opts, fname)
 }
 
+// read configuration automatically based on the given struct's field name,
+// load configs from struct field's default value, muitiple files and cmdline flags.
 func Resolve(opts interface{}, files ...string) *Config {
 	return GlobalConfig.Resolve(opts, files, false)
 }
-
+// auto flag base on given struct's field name
 func ResolveAutoFlag(opts interface{}, files ...string) *Config {
 	return GlobalConfig.Resolve(opts, files, true)
 }
 
+// validate the configs and dump it as json string
 func ValidateAndPanic(ops interface{}) *Config {
 	return GlobalConfig.ValidateAndPanic(ops)
 }
+
