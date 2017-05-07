@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// you could set _auto_conf_files_ to your app's config files,split by with command line flag
 type AutoOptions struct {
 	AutoConfFiles  string `flag:"_auto_conf_files_"`
 	AutoDirRunning string `flag:"_auto_dir_running_"`
