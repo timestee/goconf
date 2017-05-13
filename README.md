@@ -107,7 +107,7 @@ func main() {
    goconf.ResolveAutoFlag(ops,"conf_3.toml").ValidateAndPanic(ops)
 }
 ```
-go run main.go --log_level=1&http_address=0.0.0.0:1111111
+go run main.go --http_address=0.0.0.0:1111111
 
 The output will be:
 
