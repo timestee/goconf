@@ -34,7 +34,8 @@ For example, the following example, flag will be http_address, cfg will be http_
 ```
 
 ## Usage
-Here is an example of loading configuration in priority:
+
+### load multiple config files
 
 ```go
 package main
@@ -54,6 +55,8 @@ func main() {
    goconf.ResolveAutoFlag(ops,"conf_1.toml","conf_2.toml").ValidateAndPanic(ops)
 }
 ```
+
+`go run main.go --log_level=1`
 
 The output will be:
 
@@ -78,10 +81,12 @@ The output will be:
       "10.0.61.31",
       "10.0.61.32"
    ],
-   "LogLevel": 6,
+   "LogLevel": 1,
    "BoolVar": true
 }
 ```
+
+### load config file with file inherited
 
 ```go
 package main
@@ -102,6 +107,7 @@ func main() {
    goconf.ResolveAutoFlag(ops,"conf_3.toml").ValidateAndPanic(ops)
 }
 ```
+`go run main.go --log_level=1&http_address=0.0.0.0:1111111`
 
 The output will be:
 
@@ -120,7 +126,7 @@ The output will be:
 {
    "AutoConfFiles": "",
    "AutoDirRunning": "",
-   "HTTPAddress": "127.0.0.1:2",
+   "HTTPAddress": "0.0.0.0:1111111",
    "Hosts": [
       "10.0.61.29",
       "10.0.61.30",
