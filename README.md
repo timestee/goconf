@@ -1,6 +1,6 @@
 goconf
 ====
-A configuration loader in Go.
+A configuration loader in Go, used with [go_deploy](https://github.com/zsounder/scripts/tree/master/go_deploy) script.
 
 ## Overview
 
@@ -56,7 +56,7 @@ func main() {
 }
 ```
 
-`go run main.go --log_level=1`
+go run main.go --log_level=1
 
 The output will be:
 
@@ -107,7 +107,7 @@ func main() {
    goconf.ResolveAutoFlag(ops,"conf_3.toml").ValidateAndPanic(ops)
 }
 ```
-`go run main.go --log_level=1&http_address=0.0.0.0:1111111`
+go run main.go --log_level=1&http_address=0.0.0.0:1111111
 
 The output will be:
 
