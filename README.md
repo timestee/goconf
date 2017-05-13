@@ -14,10 +14,26 @@ Values are resolved with the following priorities (lowest to highest):
 3. Config file value, TOML or JSON file
 4. Command line flag
 
+## About field tags in structs
+```go
+type TestOptions struct {
+    Hosts []string `flag:"hosts" cfg:"hosts" default:"127.0.0.0,127.0.0.1"`
+}
+```
+* `flag` is the name passed from the command line.
+* `cfg` is the name used in config files.
+* `default` is the default value
 
+If do not define `flag` tag, `flag` will be snake case of the fild name.
 
+If do not define `cfg` tag, `cfg` value will be `flag` value.
 
+For example, the following example, flag will be http_address, cfg will be http_address.
+```go
+  HTTPAddress string
+```
 
+## Usage
 Here is an example of loading configuration in priority:
 
 ```go
