@@ -4,7 +4,6 @@ go:
 install:
   - go get -u github.com/zsounder/goconf
 script:
-  - pushd $TRAVIS_BUILD_DIR
   - go test -v ./...
   - popd
 notifications:
