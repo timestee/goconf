@@ -1,10 +1,7 @@
-goconf  [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf)
+# goconf  [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf) [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf)  [![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
+
 ====
 A configuration loader in Go, used with [go_deploy](https://github.com/zsounder/scripts/tree/master/go_deploy) script.
-
-## Doc
-[![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf) 
-[![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
 
 ## Overview
 
