@@ -1,4 +1,4 @@
-goconf
+goconf  [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf)
 ====
 A configuration loader in Go, used with [go_deploy](https://github.com/zsounder/scripts/tree/master/go_deploy) script.
 
