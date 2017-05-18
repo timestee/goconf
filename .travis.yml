@@ -1,10 +1,5 @@
 language: go
 go:
   - 1.8
-install:
-  - go get -u github.com/zsounder/goconf
-script:
-  - go test -v ./...
-  - popd
 notifications:
   email: false
