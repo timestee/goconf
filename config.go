@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"reflect"
+	"github.com/zsounder/golib/err2"
 )
 
 // you could set _auto_conf_files_ to your app's config files,split by command line flag
@@ -29,7 +31,10 @@ func (c *Config) GenTemplate(opts interface{}, fname string) error {
 
 // read configuration automatically based on the given struct's field name,
 // load configs from struct field's default value, muitiple files and cmdline flags.
-func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) *Config {
+func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) error {
+	if reflect.ValueOf(opts).Kind() != reflect.Ptr{
+		return ErrPassinPtr
+	}
 	// auto flag with default value
 	if autlflag {
 		innserResolve(opts, c.FS, nil, nil, true)
@@ -48,22 +53,25 @@ func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) *Confi
 	}
 
 	fmt.Printf("[Config] file: %v\n", files)
+	var errs err2.Array
 	if len(files) > 0 {
 		if err := c.FL.Load(files); err != nil {
 			fmt.Printf("[Config] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %v\n", err)
+			errs.Push(err)
 		}
 	}
 
 	innserResolve(opts, c.FS, c.FL.Data(), nil, false)
-	return c
-}
 
-// validate the configs and dump it as json string
-func (c *Config) ValidateAndPanic(opts interface{}) *Config {
 	fmt.Println("[Config]")
 	b, _ := json.MarshalIndent(opts, "", "   ")
 	fmt.Println(string(b))
-	return c
+
+	if errs.Len() > 0 {
+		return errs
+	}
+
+	return nil
 }
 
 func NewConfig(name string, errorHandling flag.ErrorHandling) *Config {
@@ -83,16 +91,10 @@ func GenTemplate(opts interface{}, fname string) error {
 
 // read configuration automatically based on the given struct's field name,
 // load configs from struct field's default value, muitiple files and cmdline flags.
-func Resolve(opts interface{}, files ...string) *Config {
+func Resolve(opts interface{}, files ...string) error {
 	return GlobalConfig.Resolve(opts, files, false)
 }
 // auto flag base on given struct's field name
-func ResolveAutoFlag(opts interface{}, files ...string) *Config {
+func ResolveAutoFlag(opts interface{}, files ...string) error {
 	return GlobalConfig.Resolve(opts, files, true)
 }
-
-// validate the configs and dump it as json string
-func ValidateAndPanic(ops interface{}) *Config {
-	return GlobalConfig.ValidateAndPanic(ops)
-}
-

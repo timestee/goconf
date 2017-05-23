@@ -2,6 +2,7 @@ package goconf
 
 import (
 	"testing"
+	"github.com/zsounder/golib/assert"
 )
 
 type TestOptions struct {
@@ -12,128 +13,83 @@ type TestOptions struct {
     BoolVar bool `default:"false"`
 }
 
+func Test_Pass_Struct(t *testing.T) {
+	ops := TestOptions{}
+	err := ResolveAutoFlag(ops)
+	assert.NotNil(t,err,"ResolveAutoFlag With Struct Get")
+}
+
+func Test_Pass_Ptr(t *testing.T) {
+	ops := &TestOptions{}
+	err := ResolveAutoFlag(ops)
+	assert.Nil(t,err,"ResolveAutoFlag With Ptr Get")
+}
+
 
 func Test_Default(t *testing.T) {
 	ops := &TestOptions{}
-	ResolveAutoFlag(ops).ValidateAndPanic(ops)
+	err := ResolveAutoFlag(ops)
 
-	if ops.HTTPAddress != "0.0.0.0:0000" {
-		t.Errorf("HTTPAddress shoult be: 0.0.0.0:0000 get:%s",ops.HTTPAddress)
-	}
-	if len(ops.Hosts) != 2 {
-		t.Errorf("Hosts length should be 2, get: %s",len(ops.Hosts))
-	}
-	if ops.Hosts[0] != "127.0.0.0" {
-		t.Errorf("Hosts[0] shoult be:127.0.0.0, get: %s",ops.Hosts[0])
-	}
-	if ops.Hosts[1] != "127.0.0.1" {
-		t.Errorf("Hosts[1] shoult be:127.0.0.1, get: %s",ops.Hosts[1])
-	}
-	if ops.LogLevel != 3 {
-		t.Errorf("LogLevel shoult be: 3 get:%s",ops.LogLevel)
-	}
+	assert.Nil(t,err,"ResolveAutoFlag")
+	assert.Equal(t,ops.HTTPAddress,"0.0.0.0:0000","HTTPAddress")
+	assert.Equal(t,len(ops.Hosts),2,"Hosts Length")
+	assert.Equal(t,ops.Hosts[0],"127.0.0.0","Hosts[0]")
+	assert.Equal(t,ops.Hosts[1],"127.0.0.1","Hosts[1]")
+	assert.Equal(t,ops.LogLevel,3,"LogLevel")
 }
 
 func Test_Default_conf_1_json(t *testing.T) {
 	ops := &TestOptions{}
-	ResolveAutoFlag(ops,"./examples/conf_1.json").ValidateAndPanic(ops)
-	if ops.HTTPAddress != "127.0.0.1:1" {
-		t.Errorf("HTTPAddress shoult be: 127.0.0.1:1 get:%s",ops.HTTPAddress)
-	}
-	if len(ops.Hosts) != 3 {
-		t.Errorf("Hosts length should be 3, get: %s",len(ops.Hosts))
-	}
-	if ops.Hosts[0] != "10.0.61.29" {
-		t.Errorf("Hosts[0] shoult be:10.0.61.29, get: %s",ops.Hosts[0])
-	}
-	if ops.Hosts[1] != "10.0.61.30" {
-		t.Errorf("Hosts[1] shoult be:10.0.61.30, get: %s",ops.Hosts[1])
-	}
-	if ops.Hosts[2] != "10.0.61.31" {
-		t.Errorf("Hosts[2] shoult be:10.0.61.31, get: %s",ops.Hosts[2])
-	}
-	if ops.LogLevel != 3 {
-		t.Errorf("LogLevel shoult be: 3 get:%d",ops.LogLevel)
-	}
+	err := ResolveAutoFlag(ops,"./examples/conf_1.json")
+
+	assert.Nil(t,err,"ResolveAutoFlag")
+	assert.Equal(t,ops.HTTPAddress,"127.0.0.1:1","HTTPAddress")
+	assert.Equal(t,len(ops.Hosts),3,"Hosts Length")
+	assert.Equal(t,ops.Hosts[0],"10.0.61.29","Hosts[0]")
+	assert.Equal(t,ops.Hosts[1],"10.0.61.30","Hosts[1]")
+	assert.Equal(t,ops.Hosts[2],"10.0.61.31","Hosts[2]")
+	assert.Equal(t,ops.LogLevel,3,"LogLevel")
 }
 
 func Test_Default_conf_1_toml(t *testing.T) {
 	ops := &TestOptions{}
-	ResolveAutoFlag(ops,"./examples/conf_1.toml").ValidateAndPanic(ops)
-	if ops.HTTPAddress != "127.0.0.1:1" {
-		t.Errorf("HTTPAddress shoult be: 127.0.0.1:1 get:%s",ops.HTTPAddress)
-	}
-	if len(ops.Hosts) != 3 {
-		t.Errorf("Hosts length should be 3, get: %s",len(ops.Hosts))
-	}
-	if ops.Hosts[0] != "10.0.61.29" {
-		t.Errorf("Hosts[0] shoult be:10.0.61.29, get: %s",ops.Hosts[0])
-	}
-	if ops.Hosts[1] != "10.0.61.30" {
-		t.Errorf("Hosts[1] shoult be:10.0.61.30, get: %s",ops.Hosts[1])
-	}
-	if ops.Hosts[2] != "10.0.61.31" {
-		t.Errorf("Hosts[2] shoult be:10.0.61.31, get: %s",ops.Hosts[2])
-	}
-	if ops.LogLevel != 3 {
-		t.Errorf("LogLevel shoult be: 3 get:%d",ops.LogLevel)
-	}
+	err := ResolveAutoFlag(ops,"./examples/conf_1.toml")
+
+	assert.Nil(t,err,"ResolveAutoFlag")
+	assert.Equal(t,ops.HTTPAddress,"127.0.0.1:1","HTTPAddress")
+	assert.Equal(t,len(ops.Hosts),3,"Hosts Length")
+	assert.Equal(t,ops.Hosts[0],"10.0.61.29","Hosts[0]")
+	assert.Equal(t,ops.Hosts[1],"10.0.61.30","Hosts[1]")
+	assert.Equal(t,ops.Hosts[2],"10.0.61.31","Hosts[2]")
+	assert.Equal(t,ops.LogLevel,3,"LogLevel")
 }
 
 func Test_Default_conf_1_toml_conf_2_toml(t *testing.T) {
 	ops := &TestOptions{}
-	ResolveAutoFlag(ops,"./examples/conf_1.toml","./examples/conf_2.toml").ValidateAndPanic(ops)
-	if ops.HTTPAddress != "127.0.0.1:2" {
-		t.Errorf("HTTPAddress shoult be: 127.0.0.1:2 get:%s",ops.HTTPAddress)
-	}
-	if len(ops.Hosts) != 4 {
-		t.Errorf("Hosts length should be 4, get: %s",len(ops.Hosts))
-	}
-	if ops.Hosts[0] != "10.0.61.29" {
-		t.Errorf("Hosts[0] shoult be:10.0.61.29, get: %s",ops.Hosts[0])
-	}
-	if ops.Hosts[1] != "10.0.61.30" {
-		t.Errorf("Hosts[1] shoult be:10.0.61.30, get: %s",ops.Hosts[1])
-	}
-	if ops.Hosts[2] != "10.0.61.31" {
-		t.Errorf("Hosts[2] shoult be:10.0.61.31, get: %s",ops.Hosts[2])
-	}
-	if ops.Hosts[3] != "10.0.61.32" {
-		t.Errorf("Hosts[3] shoult be:10.0.61.32, get: %s",ops.Hosts[3])
-	}
-	if ops.LogLevel != 6 {
-		t.Errorf("LogLevel shoult be: 6 get:%d",ops.LogLevel)
-	}
+	err := ResolveAutoFlag(ops,"./examples/conf_1.toml","./examples/conf_2.toml")
+
+	assert.Nil(t,err,"ResolveAutoFlag")
+	assert.Equal(t,ops.HTTPAddress,"127.0.0.1:2","HTTPAddress")
+	assert.Equal(t,len(ops.Hosts),4,"Hosts Length")
+	assert.Equal(t,ops.Hosts[0],"10.0.61.29","Hosts[0]")
+	assert.Equal(t,ops.Hosts[1],"10.0.61.30","Hosts[1]")
+	assert.Equal(t,ops.Hosts[2],"10.0.61.31","Hosts[2]")
+	assert.Equal(t,ops.Hosts[3],"10.0.61.32","Hosts[3]")
+	assert.Equal(t,ops.LogLevel,6,"LogLevel")
 }
 
 func Test_Default_conf_3_toml_inherit(t *testing.T) {
 	ops := &TestOptions{}
-	ResolveAutoFlag(ops,"./examples/conf_3.toml",).ValidateAndPanic(ops)
-	if ops.HTTPAddress != "127.0.0.1:2" {
-		t.Errorf("HTTPAddress shoult be: 127.0.0.1:2 get:%s",ops.HTTPAddress)
-	}
-	if len(ops.Hosts) != 5 {
-		t.Errorf("Hosts length should be 4, get: %s",len(ops.Hosts))
-	}
-	if ops.Hosts[0] != "10.0.61.29" {
-		t.Errorf("Hosts[0] shoult be:10.0.61.29, get: %s",ops.Hosts[0])
-	}
-	if ops.Hosts[1] != "10.0.61.30" {
-		t.Errorf("Hosts[1] shoult be:10.0.61.30, get: %s",ops.Hosts[1])
-	}
-	if ops.Hosts[2] != "10.0.61.31" {
-		t.Errorf("Hosts[2] shoult be:10.0.61.31, get: %s",ops.Hosts[2])
-	}
-	if ops.Hosts[3] != "10.0.61.32" {
-		t.Errorf("Hosts[3] shoult be:10.0.61.32, get: %s",ops.Hosts[3])
-	}
-	if ops.Hosts[4] != "10.0.61.33" {
-		t.Errorf("Hosts[4] shoult be:10.0.61.33, get: %s",ops.Hosts[3])
-	}
-	if ops.LogLevel != 2 {
-		t.Errorf("LogLevel shoult be: 2 get:%s",ops.LogLevel)
-	}
-	if ops.BoolVar != true {
-		t.Errorf("BoolVar shoult be: true get:%v",ops.BoolVar)
-	}
+	err := ResolveAutoFlag(ops,"./examples/conf_3.toml")
+
+	assert.Nil(t,err,"ResolveAutoFlag")
+	assert.Equal(t,ops.HTTPAddress,"127.0.0.1:2","HTTPAddress")
+	assert.Equal(t,len(ops.Hosts),5,"Hosts Length")
+	assert.Equal(t,ops.Hosts[0],"10.0.61.29","Hosts[0]")
+	assert.Equal(t,ops.Hosts[1],"10.0.61.30","Hosts[1]")
+	assert.Equal(t,ops.Hosts[2],"10.0.61.31","Hosts[2]")
+	assert.Equal(t,ops.Hosts[3],"10.0.61.32","Hosts[3]")
+	assert.Equal(t,ops.Hosts[4],"10.0.61.33","Hosts[4]")
+	assert.Equal(t,ops.LogLevel,2,"LogLevel")
+	assert.Equal(t,ops.BoolVar,true,"BoolVar")
 }
