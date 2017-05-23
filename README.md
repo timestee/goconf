@@ -139,4 +139,4 @@ The output will be:
 }
 ```
 ### TODO
-- [ ] add validate support, include validation tag
+- [X] add validate support, include validation tag  -> using [validator]([log4go](https://github.com/zsounder/golib/tree/master/validator))
