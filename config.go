@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
-	"strings"
-	"reflect"
 	"github.com/zsounder/golib/err2"
+	"os"
+	"reflect"
+	"strings"
 )
 
 // you could set _auto_conf_files_ to your app's config files,split by command line flag
@@ -18,8 +18,8 @@ type AutoOptions struct {
 
 // Config represents a configuration loader
 type Config struct {
-	FS  *flag.FlagSet
-	FL  *FileLoader
+	FS *flag.FlagSet
+	FL *FileLoader
 }
 
 // Gen template conf file base on the given struct and save the conf to file.
@@ -32,7 +32,7 @@ func (c *Config) GenTemplate(opts interface{}, fname string) error {
 // read configuration automatically based on the given struct's field name,
 // load configs from struct field's default value, muitiple files and cmdline flags.
 func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) error {
-	if reflect.ValueOf(opts).Kind() != reflect.Ptr{
+	if reflect.ValueOf(opts).Kind() != reflect.Ptr {
 		return ErrPassinPtr
 	}
 	// auto flag with default value
@@ -94,6 +94,7 @@ func GenTemplate(opts interface{}, fname string) error {
 func Resolve(opts interface{}, files ...string) error {
 	return GlobalConfig.Resolve(opts, files, false)
 }
+
 // auto flag base on given struct's field name
 func ResolveAutoFlag(opts interface{}, files ...string) error {
 	return GlobalConfig.Resolve(opts, files, true)

@@ -102,7 +102,7 @@ func (c *FileLoader) __load(file string) (interface{}, error) {
 		return data, err
 	}
 
-	return nil, fmt.Errorf("Load %s with error %s", file,err.Error())
+	return nil, fmt.Errorf("Load %s with error %s", file, err.Error())
 }
 
 func mapIndex(mp reflect.Value, index reflect.Value) reflect.Value {

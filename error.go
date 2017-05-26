@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	ErrPassinPtr  = errors.New("unsupported type, pass in as ptr")
+	ErrPassinPtr = errors.New("unsupported type, pass in as ptr")
 )

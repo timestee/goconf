@@ -14,4 +14,3 @@ Values are resolved with the following priorities (lowest to highest):
 */
 
 package goconf
-
