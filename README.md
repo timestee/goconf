@@ -139,4 +139,5 @@ The output will be:
 }
 ```
 ### TODO
-- [X] add validate support, include validation tag  -> using [validator]([log4go](https://github.com/zsounder/golib/tree/master/validator))
+- [ ] support passing struct to `ResolveAutoFlag`, only support ptr now
+- [X] add validate support, include validation tag  -> using [validator](https://github.com/zsounder/golib/tree/master/validator)
