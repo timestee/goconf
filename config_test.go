@@ -16,7 +16,7 @@ type TestOptions struct {
 func Test_Pass_Struct(t *testing.T) {
 	ops := TestOptions{}
 	err := ResolveAutoFlag(ops)
-	assert.Nil(t, err, "ResolveAutoFlag With Struct Get")
+	assert.NotNil(t, err, "ResolveAutoFlag With Struct Get")
 }
 
 func Test_Pass_Ptr(t *testing.T) {
@@ -29,7 +29,7 @@ func Test_Default(t *testing.T) {
 	ops := &TestOptions{}
 	err := ResolveAutoFlag(ops)
 
-	assert.Nil(t, err)
+	assert.Nil(t, err,"ResolveAutoFlag")
 	assert.Equal(t, ops.HTTPAddress, "0.0.0.0:0000", "HTTPAddress")
 	assert.Equal(t, len(ops.Hosts), 2, "Hosts Length")
 	assert.Equal(t, ops.Hosts[0], "127.0.0.0", "Hosts[0]")
