@@ -6,7 +6,7 @@ A configuration loader in Go. Recommended to use with with [go_deploy](https://g
 
 * Read configuration automatically based on the given struct's field name.
 * Load configuration from multiple sources
-* multiple file inherit
+* file inherit
 
 Values are resolved with the following priorities (lowest to highest):
 1. Options struct default value
@@ -28,7 +28,7 @@ If do not define `flag` tag, `flag` will be snake case of the fild name.
 
 If do not define `cfg` tag, `cfg` value will be `flag` value.
 
-For example, the following example, flag will be http_address, cfg will be http_address.
+For example, flag and cfg will be http_address.
 ```go
   HTTPAddress string
 ```
