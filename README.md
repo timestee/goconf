@@ -62,7 +62,6 @@ The output will be:
 
 ```plain
 [Config] auto flag succ, name: _auto_conf_files_ val:
-[Config] auto flag succ, name: _auto_dir_running_ val:
 [Config] auto flag succ, name: http_address val: 0.0.0.0:0000
 [Config] auto flag fail, name: hosts val: 127.0.0.0,127.0.0.1 err: type not support []string
 [Config] auto flag succ, name: log_level val: 3
@@ -73,7 +72,6 @@ The output will be:
 [Config]
 {
    "AutoConfFiles": "",
-   "AutoDirRunning": "",
    "HTTPAddress": "127.0.0.1:2",
    "Hosts": [
       "10.0.61.29",
@@ -113,7 +111,6 @@ The output will be:
 
 ```plain
 [Config] auto flag succ, name: _auto_conf_files_ val:
-[Config] auto flag succ, name: _auto_dir_running_ val:
 [Config] auto flag succ, name: http_address val: 0.0.0.0:0000
 [Config] auto flag fail, name: hosts val: 127.0.0.0,127.0.0.1 err: type not support []string
 [Config] auto flag succ, name: log_level val: 3
@@ -125,7 +122,6 @@ The output will be:
 [Config]
 {
    "AutoConfFiles": "",
-   "AutoDirRunning": "",
    "HTTPAddress": "0.0.0.0:1111111",
    "Hosts": [
       "10.0.61.29",
