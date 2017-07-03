@@ -1,6 +1,6 @@
 # goconf  [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf) [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf)  [![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
 
-GO服务配置管理工具，推荐配合go_deploy[go_deploy](https://github.com/zsounder/scripts/tree/master/go_deploy)脚本使用.
+GO服务配置管理工具, 可配合[go_deploy](https://github.com/zsounder/scripts/tree/master/go_deploy)脚本使用.
 
 ## 简介
 
