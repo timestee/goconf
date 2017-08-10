@@ -28,9 +28,17 @@ func (c *Config) GenTemplate(opts interface{}, fname string) error {
 	return genTemplate(tomap, fname)
 }
 
+func (c *Config) ResolveWithoutCmd(opts interface{}, files []string, autoflag bool) error {
+	return c.resolve(opts,files,autoflag,false)
+}
+
+func (c *Config) Resolve(opts interface{}, files []string, autoflag bool) error {
+	return c.resolve(opts,files,autoflag,true)
+}
+
 // read configuration automatically based on the given struct's field name,
 // load configs from struct field's default value, muitiple files and cmdline flags.
-func (c *Config) Resolve(opts interface{}, files []string, autoflag bool) error {
+func (c *Config) resolve(opts interface{}, files []string, autoflag bool,cmdParse bool) error {
 	if reflect.ValueOf(opts).Kind() != reflect.Ptr {
 		return ErrPassinPtr
 	}
@@ -40,7 +48,9 @@ func (c *Config) Resolve(opts interface{}, files []string, autoflag bool) error 
 	}
 
 	// parse cmd args
-	c.FS.Parse(os.Args[1:])
+	if cmdParse {
+		c.FS.Parse(os.Args[1:])
+	}
 
 	flagInst := c.FS.Lookup("_auto_conf_files_")
 	tmp := strings.Trim(flagInst.Value.String(), " ")
