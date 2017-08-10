@@ -40,7 +40,7 @@ func (c *Config) Resolve(opts interface{}, files []string, autoflag bool) error 
 	}
 
 	// parse cmd args
-	// c.FS.Parse(os.Args[1:])
+	c.FS.Parse(os.Args[1:])
 
 	flagInst := c.FS.Lookup("_auto_conf_files_")
 	tmp := strings.Trim(flagInst.Value.String(), " ")
