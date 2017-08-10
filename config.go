@@ -30,17 +30,17 @@ func (c *Config) GenTemplate(opts interface{}, fname string) error {
 
 // read configuration automatically based on the given struct's field name,
 // load configs from struct field's default value, muitiple files and cmdline flags.
-func (c *Config) Resolve(opts interface{}, files []string, autlflag bool) error {
+func (c *Config) Resolve(opts interface{}, files []string, autoflag bool) error {
 	if reflect.ValueOf(opts).Kind() != reflect.Ptr {
 		return ErrPassinPtr
 	}
 	// auto flag with default value
-	if autlflag {
+	if autoflag {
 		innserResolve(opts, c.FS, nil, nil, true)
 	}
 
 	// parse cmd args
-	c.FS.Parse(os.Args[1:])
+	// c.FS.Parse(os.Args[1:])
 
 	flagInst := c.FS.Lookup("_auto_conf_files_")
 	tmp := strings.Trim(flagInst.Value.String(), " ")
