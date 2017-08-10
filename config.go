@@ -73,8 +73,11 @@ func (c *Config) resolve(opts interface{}, files []string, autoflag bool,cmdPars
 	innserResolve(opts, c.FS, c.FL.Data(), nil, false)
 
 	fmt.Println("[Config]")
-	b, _ := json.MarshalIndent(opts, "", "   ")
-	fmt.Println(string(b))
+	if b, err := json.MarshalIndent(opts, "", "   "); err!=nil {
+		errs.Push(err)
+	}else{
+		fmt.Println(string(b))
+	}
 
 	if errs.Len() > 0 {
 		return errs
