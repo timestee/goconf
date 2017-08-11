@@ -12,7 +12,8 @@ import (
 
 // you could set _auto_conf_files_ to your app's config files,split by command line flag
 type AutoOptions struct {
-	AutoConfFiles  string `flag:"_auto_conf_files_"`
+	AutoConfFiles   string `flag:"_auto_conf_files_"`
+	AutoDirRunning  string `flag:"-_auto_dir_running_"`
 }
 
 // Config represents a configuration loader
