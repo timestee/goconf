@@ -112,3 +112,7 @@ func Resolve(opts interface{}, files ...string) error {
 func ResolveAutoFlag(opts interface{}, files ...string) error {
 	return GlobalConfig.Resolve(opts, files, true)
 }
+
+func ResolveWithoutCmd(opts interface{}, files ...string) error {
+	return GlobalConfig.ResolveWithoutCmd(opts,files,true)
+}
