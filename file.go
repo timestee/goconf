@@ -9,21 +9,20 @@ import (
 	"strings"
 )
 
-func NewFileLoader() *FileLoader {
-	return &FileLoader{}
-}
-
 type FileLoader struct {
-	data reflect.Value
+	log     func(string)
+	data    reflect.Value
+	infoLog func(string)
+	errLog  func(string)
 }
 
-func genTemplate(opts interface{}, fname string) error {
-	file, err := os.Create(fname)
+func genTemplate(opts interface{}, fn string) error {
+	file, err := os.Create(fn)
 	defer file.Close()
 	if err != nil {
 		return err
 	}
-	ext := strings.ToLower(filepath.Ext(fname))
+	ext := strings.ToLower(filepath.Ext(fn))
 	if encoder, ok := EncodeFuncMap[ext]; ok {
 		ret, err := encoder(opts)
 		if err != nil {
@@ -32,7 +31,7 @@ func genTemplate(opts interface{}, fname string) error {
 		file.WriteString(ret)
 		return nil
 	}
-	return fmt.Errorf("File format not supported: " + filepath.Ext(fname))
+	return fmt.Errorf("file format not supported: " + filepath.Ext(fn))
 }
 
 func (c *FileLoader) Data() map[string]interface{} {
@@ -53,7 +52,7 @@ func (c *FileLoader) _load(rdata reflect.Value, files []string, asc bool) (refle
 		if data, err := c.__load(file); err != nil {
 			return rdata, err
 		} else {
-			fmt.Printf("[Config] load: %v\n", file)
+			c.log(fmt.Sprintf("load: %s", file))
 			tmp = merge(tmp, reflect.ValueOf(data))
 		}
 	}
@@ -74,27 +73,27 @@ func (c *FileLoader) __load(file string) (interface{}, error) {
 	var unmarshal DecodeFunc
 	var ok bool
 	if unmarshal, ok = DecodeFuncMap[ext]; !ok {
-		return nil, fmt.Errorf("File format not supported: %s %s", file, filepath.Ext(file))
+		return nil, fmt.Errorf("file format not supported: %s %s", file, filepath.Ext(file))
 	}
 
 	var data interface{}
 	var inherit interface{}
 	if err = unmarshal(bytes, &data); err == nil {
-		data_map := data.(map[string]interface{})
-		if inherit, ok = data_map["inherit_files"]; !ok {
+		dm := data.(map[string]interface{})
+		if inherit, ok = dm["inherit_files"]; !ok {
 			return data, err
 		}
 		var ret reflect.Value
-		basepath := filepath.Dir(file) + "/"
+		basePath := filepath.Dir(file) + "/"
 		switch inherit.(type) {
 		case string:
-			name := basepath + inherit.(string)
+			name := basePath + inherit.(string)
 			ret, err = c._load(reflect.ValueOf(data), []string{name}, false)
 			return ret.Interface(), err
 		case []interface{}:
 			var files []string
 			for _, fi := range inherit.([]interface{}) {
-				files = append(files, basepath+fi.(string))
+				files = append(files, basePath+fi.(string))
 			}
 			ret, err = c._load(reflect.ValueOf(data), files, false)
 			return ret.Interface(), err
@@ -102,7 +101,7 @@ func (c *FileLoader) __load(file string) (interface{}, error) {
 		return data, err
 	}
 
-	return nil, fmt.Errorf("Load %s with error %s", file, err.Error())
+	return nil, fmt.Errorf("load %s with error %s", file, err.Error())
 }
 
 func mapIndex(mp reflect.Value, index reflect.Value) reflect.Value {

@@ -4,56 +4,81 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/zsounder/golib/err2"
+	"log"
 	"os"
 	"reflect"
 	"strings"
+
+	"bitbucket.org/funplus/golib/err2"
+	"github.com/pkg/errors"
 )
 
-// you could set _auto_conf_files_ to your app's config files,split by command line flag
-type AutoOptions struct {
-	AutoConfFiles   string `flag:"_auto_conf_files_"`
-	AutoDirRunning  string `flag:"_auto_dir_running_"`
+var (
+	ErrPassInPtr = errors.New("unsupported type, pass in as ptr")
+)
+
+func Log(f func(string)) func(c *Config) {
+	return func(c *Config) {
+		c.optionLog = f
+	}
 }
 
 // Config represents a configuration loader
 type Config struct {
-	FS *flag.FlagSet
-	FL *FileLoader
+	optionLog  func(string)
+	flagSet    *flag.FlagSet
+	fileLoader *FileLoader
+}
+
+func New(name string, options ...func(*Config)) *Config {
+	c := &Config{}
+	if len(options) > 0 {
+		for _, option := range options {
+			option(c)
+		}
+	}
+	c.flagSet = flag.NewFlagSet(name, flag.ExitOnError)
+	c.fileLoader = &FileLoader{log: c.log}
+	return c
+}
+
+func (c *Config) log(msg string) {
+	msg = fmt.Sprintf("[goconf]: %s", msg)
+	if c.optionLog == nil {
+		log.Print(msg)
+	} else {
+		c.optionLog(msg)
+	}
 }
 
 // Gen template conf file base on the given struct and save the conf to file.
-func (c *Config) GenTemplate(opts interface{}, fname string) error {
-	var tomap map[string]interface{} = make(map[string]interface{})
-	innserResolve(opts, nil, nil, tomap, false)
-	return genTemplate(tomap, fname)
+func (c *Config) GenTemplate(opts interface{}, fn string) error {
+	tm := make(map[string]interface{})
+	innserResolve(opts, nil, nil, tm, false, c.log)
+	return genTemplate(tm, fn)
 }
 
-func (c *Config) ResolveWithoutCmd(opts interface{}, files []string, autoflag bool) error {
-	return c.resolve(opts,files,autoflag,false)
+func (c *Config) Resolve(opts interface{}, files []string) error {
+	return c.resolve(opts, files)
 }
 
-func (c *Config) Resolve(opts interface{}, files []string, autoflag bool) error {
-	return c.resolve(opts,files,autoflag,true)
+func (c *Config) MustResolve(opts interface{}, files []string) {
+	if err := c.resolve(opts, files); err != nil {
+		c.log(fmt.Sprintf("Failed in must model err: %s", err.Error()))
+		panic(err)
+	}
 }
 
 // read configuration automatically based on the given struct's field name,
 // load configs from struct field's default value, muitiple files and cmdline flags.
-func (c *Config) resolve(opts interface{}, files []string, autoflag bool,cmdParse bool) error {
+func (c *Config) resolve(opts interface{}, files []string) error {
 	if reflect.ValueOf(opts).Kind() != reflect.Ptr {
-		return ErrPassinPtr
+		return ErrPassInPtr
 	}
 	// auto flag with default value
-	if autoflag {
-		innserResolve(opts, c.FS, nil, nil, true)
-	}
-
-	// parse cmd args
-	if cmdParse {
-		c.FS.Parse(os.Args[1:])
-	}
-
-	flagInst := c.FS.Lookup("_auto_conf_files_")
+	innserResolve(opts, c.flagSet, nil, nil, true, c.log)
+	c.flagSet.Parse(os.Args[1:])
+	flagInst := c.flagSet.Lookup("_auto_conf_files_")
 	tmp := strings.Trim(flagInst.Value.String(), " ")
 	if tmp != "" {
 		filesFlag := strings.Split(tmp, ",")
@@ -62,57 +87,25 @@ func (c *Config) resolve(opts interface{}, files []string, autoflag bool,cmdPars
 		}
 	}
 
-	fmt.Printf("[Config] file: %v\n", files)
-	var errs err2.Array
+	c.log(fmt.Sprintf("file:  %v", files))
+	errs := err2.Array{ErrorFormat: err2.DotFormatFunc}
 	if len(files) > 0 {
-		if err := c.FL.Load(files); err != nil {
-			fmt.Printf("[Config] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %v\n", err)
+		if err := c.fileLoader.Load(files); err != nil {
+			c.log(fmt.Sprintf("Error with %s", err.Error()))
 			errs.Push(err)
 		}
 	}
 
-	innserResolve(opts, c.FS, c.FL.Data(), nil, false)
-
-	fmt.Println("[Config]")
-	if b, err := json.MarshalIndent(opts, "", "   "); err!=nil {
+	innserResolve(opts, c.flagSet, c.fileLoader.Data(), nil, false, c.log)
+	if b, err := json.MarshalIndent(opts, "", "   "); err != nil {
 		errs.Push(err)
-	}else{
-		fmt.Println(string(b))
+	} else {
+		c.log(fmt.Sprintf("Contents:\n%v", string(b)))
 	}
 
-	if errs.Len() > 0 {
+	if errs.Err() != nil {
 		return errs
 	}
 
 	return nil
-}
-
-func NewConfig(name string, errorHandling flag.ErrorHandling) *Config {
-	return &Config{
-		FS: flag.NewFlagSet(name, errorHandling),
-		FL: NewFileLoader(),
-	}
-}
-
-// GlobalConfig
-var GlobalConfig = NewConfig(os.Args[0], flag.ExitOnError)
-
-// Gen template conf file base on the given struct and save the conf to file.
-func GenTemplate(opts interface{}, fname string) error {
-	return GlobalConfig.GenTemplate(opts, fname)
-}
-
-// read configuration automatically based on the given struct's field name,
-// load configs from struct field's default value, muitiple files and cmdline flags.
-func Resolve(opts interface{}, files ...string) error {
-	return GlobalConfig.Resolve(opts, files, false)
-}
-
-// auto flag base on given struct's field name
-func ResolveAutoFlag(opts interface{}, files ...string) error {
-	return GlobalConfig.Resolve(opts, files, true)
-}
-
-func ResolveWithoutCmd(opts interface{}, files ...string) error {
-	return GlobalConfig.ResolveWithoutCmd(opts,files,true)
 }

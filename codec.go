@@ -3,6 +3,7 @@ package goconf
 import (
 	"bytes"
 	"encoding/json"
+
 	"github.com/BurntSushi/toml"
 )
 
