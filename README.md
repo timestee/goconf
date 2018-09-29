@@ -1,40 +1,40 @@
-# goconf  [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf) [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf)  [![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
+# goconf [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf) [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf)  [![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
 
 
-## 简介
+## Overview
 
-* 自动根据配置类的参数名称读取配置文件
-* 支持多个配置文件
-* 支持文件继承
+* Read configuration automatically based on the given struct's field name.
+* Load configuration from multiple sources
+* file inherit
 
-参数值按照如下顺序解析(优先级由低到高)
-1. 配置类参数的默认值
-2. 使用flag指定的值
-3. 配置文件中的参数值(json、toml等)
-4. 命令行传入的参数值
+Values are resolved with the following priorities (lowest to highest):
+1. Options struct default value
+2. Flags default value
+3. Config file value, TOML or JSON file
+4. Command line flag
 
-## struct中的tag
+## About field tags in structs
 ```go
 type TestOptions struct {
     Hosts []string `flag:"hosts" cfg:"hosts" default:"127.0.0.0,127.0.0.1"`
 }
 ```
-* `flag` ：为命令行传入的参数名
-* `cfg` 为配置文件中使用的参数名.
-* `default` 为参数的默认值
+* `flag` is the name passed from the command line.
+* `cfg` is the name used in config files.
+* `default` is the default value
 
-如果没有定义flag,falg等于参数名的snake case化.
+If do not define `flag` tag, `flag` will be snake case of the fild name.
 
-如果没有定义cfg,cfg等于flag.
+If do not define `cfg` tag, `cfg` value will be `flag` value.
 
-例如： 下例中, 参数HTTPAddress的flag为http_address, cfg也是http_address.
+For example, flag and cfg will be http_address.
 ```go
   HTTPAddress string
 ```
 
-## 使用
+## Usage
 
-### 多文件加载
+### load multiple config files
 
 ```go
 package main
@@ -57,11 +57,10 @@ func main() {
 
 `go run main.go --log_level=1`
 
-输出为:
+The output will be:
 
 ```plain
 [Config] auto flag succ, name: _auto_conf_files_ val:
-[Config] auto flag succ, name: _auto_dir_running_ val:
 [Config] auto flag succ, name: http_address val: 0.0.0.0:0000
 [Config] auto flag fail, name: hosts val: 127.0.0.0,127.0.0.1 err: type not support []string
 [Config] auto flag succ, name: log_level val: 3
@@ -72,7 +71,6 @@ func main() {
 [Config]
 {
    "AutoConfFiles": "",
-   "AutoDirRunning": "",
    "HTTPAddress": "127.0.0.1:2",
    "Hosts": [
       "10.0.61.29",
@@ -85,7 +83,7 @@ func main() {
 }
 ```
 
-### 文件继承
+### load config file with file inherited
 
 ```go
 package main
@@ -108,11 +106,10 @@ func main() {
 ```
 `go run main.go --http_address=0.0.0.0:1111111`
 
-输出为:
+The output will be:
 
 ```plain
 [Config] auto flag succ, name: _auto_conf_files_ val:
-[Config] auto flag succ, name: _auto_dir_running_ val:
 [Config] auto flag succ, name: http_address val: 0.0.0.0:0000
 [Config] auto flag fail, name: hosts val: 127.0.0.0,127.0.0.1 err: type not support []string
 [Config] auto flag succ, name: log_level val: 3
@@ -124,7 +121,6 @@ func main() {
 [Config]
 {
    "AutoConfFiles": "",
-   "AutoDirRunning": "",
    "HTTPAddress": "0.0.0.0:1111111",
    "Hosts": [
       "10.0.61.29",
@@ -138,4 +134,5 @@ func main() {
 }
 ```
 ### TODO
-- [X] 添加参数验证支持 -> 使用 [validator](https://github.com/zsounder/golib/tree/master/validator)
+- [ ] support passing struct to `ResolveAutoFlag`, only support ptr now
+- [X] add validate support, include validation tag  -> using [validator](https://github.com/zsounder/golib/tree/master/validator)
