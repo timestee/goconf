@@ -51,7 +51,7 @@ type TestOptions struct {
 
 func main() {
    ops := &TestOptions{}
-   goconf.ResolveAutoFlag(ops,"conf_1.toml","conf_2.toml")
+   goconf.MustResolve(ops,"conf_1.toml","conf_2.toml")
 }
 ```
 
@@ -101,7 +101,7 @@ type TestOptions struct {
 func main() {
    ops := &TestOptions{}
    // conf_3 inherit from conf_1 and conf_2
-   goconf.ResolveAutoFlag(ops,"conf_3.toml")
+   goconf.MustResolve(ops,"conf_3.toml")
 }
 ```
 `go run main.go --http_address=0.0.0.0:1111111`
