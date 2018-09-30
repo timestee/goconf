@@ -9,8 +9,8 @@ import (
 	"reflect"
 	"strings"
 
-	"bitbucket.org/funplus/golib/err2"
 	"github.com/pkg/errors"
+	"github.com/zsounder/golib/err2"
 )
 
 var (

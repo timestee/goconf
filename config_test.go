@@ -3,7 +3,7 @@ package goconf
 import (
 	"testing"
 
-	"bitbucket.org/funplus/golib/assert"
+	"github.com/zsounder/golib/assert"
 )
 
 type TestOptions struct {

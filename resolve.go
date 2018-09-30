@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"bitbucket.org/funplus/golib/str"
+	"github.com/zsounder/golib/str"
 )
 
 func HasArg(fs *flag.FlagSet, s string) bool {
