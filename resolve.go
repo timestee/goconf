@@ -4,10 +4,18 @@ import (
 	"flag"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
-
-	"github.com/zsounder/golib/str"
 )
+
+var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+
+func snakeCase(str string) string {
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
+}
 
 func HasArg(fs *flag.FlagSet, s string) bool {
 	var found bool
@@ -45,7 +53,7 @@ func innserResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]in
 		defaultVal := field.Tag.Get("default")
 
 		if flagName == "" {
-			flagName = str.ToSnakeCase(field.Name)
+			flagName = snakeCase(field.Name)
 		}
 
 		if cfgName == "" {

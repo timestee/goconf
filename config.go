@@ -8,13 +8,10 @@ import (
 	"os"
 	"reflect"
 	"strings"
-
-	"github.com/pkg/errors"
-	"github.com/zsounder/golib/err2"
 )
 
 var (
-	ErrPassInPtr = errors.New("unsupported type, pass in as ptr")
+	ErrPassInPtr = fmt.Errorf("unsupported type, pass in as ptr")
 )
 
 func Log(f func(string)) func(c *Config) {
@@ -77,18 +74,20 @@ func (c *Config) resolve(opts interface{}, files []string) error {
 	}
 	// auto flag with default value
 	innserResolve(opts, c.flagSet, nil, nil, true, c.log)
-	c.flagSet.Parse(os.Args[1:])
+	_ = c.flagSet.Parse(os.Args[1:])
 	flagInst := c.flagSet.Lookup("_auto_conf_files_")
-	tmp := strings.Trim(flagInst.Value.String(), " ")
-	if tmp != "" {
-		filesFlag := strings.Split(tmp, ",")
-		if len(filesFlag) != 0 {
-			files = filesFlag
+	if flagInst != nil {
+		tmp := strings.Trim(flagInst.Value.String(), " ")
+		if tmp != "" {
+			filesFlag := strings.Split(tmp, ",")
+			if len(filesFlag) != 0 {
+				files = filesFlag
+			}
 		}
 	}
 
 	c.log(fmt.Sprintf("file:  %v", files))
-	errs := err2.Array{ErrorFormat: err2.DotFormatFunc}
+	errs := ErrArray{ErrorFormat: ErrArrayDotFormatFunc}
 	if len(files) > 0 {
 		if err := c.fileLoader.Load(files); err != nil {
 			c.log(fmt.Sprintf("Error with %s", err.Error()))

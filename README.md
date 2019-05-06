@@ -1,4 +1,4 @@
-# goconf [![Build Status](https://travis-ci.org/zsounder/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf) [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf)  [![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
+# goconf [![Build Status](https://travis-ci.org/timestee/goconf.svg?branch=master)](https://travis-ci.org/zsounder/goconf) [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/zsounder/goconf)  [![GoDoc](https://godoc.org/github.com/zsounder/goconf?status.svg)](https://godoc.org/github.com/zsounder/goconf)
 
 
 ## Overview
@@ -39,7 +39,7 @@ For example, flag and cfg will be http_address.
 ```go
 package main
 
-import "github.com/zsounder/goconf"
+import "github.com/timestee/goconf"
 
 type TestOptions struct {
     goconf.AutoOptions
@@ -88,7 +88,7 @@ The output will be:
 ```go
 package main
 
-import "github.com/zsounder/goconf"
+import "github.com/timestee/goconf"
 
 type TestOptions struct {
     goconf.AutoOptions
@@ -133,6 +133,3 @@ The output will be:
    "BoolVar": true
 }
 ```
-### TODO
-- [ ] support passing struct to `ResolveAutoFlag`, only support ptr now
-- [X] add validate support, include validation tag  -> using [validator](https://github.com/zsounder/golib/tree/master/validator)
