@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
@@ -34,7 +35,8 @@ func New(name string, options ...func(*Config)) *Config {
 			option(c)
 		}
 	}
-	c.flagSet = flag.NewFlagSet(name, flag.ExitOnError)
+	c.flagSet = flag.NewFlagSet(name, flag.ContinueOnError)
+	c.flagSet.SetOutput(ioutil.Discard)
 	c.fileLoader = &FileLoader{log: c.log}
 	return c
 }
@@ -74,7 +76,13 @@ func (c *Config) resolve(opts interface{}, files []string) error {
 	}
 	// auto flag with default value
 	innserResolve(opts, c.flagSet, nil, nil, true, c.log)
-	_ = c.flagSet.Parse(os.Args[1:])
+	if err := c.flagSet.Parse(os.Args[1:]); err != nil {
+		if err != flag.ErrHelp {
+			_, _ = fmt.Fprintf(os.Stderr, "flag: %v\n", err)
+			c.flagSet.Usage()
+		}
+	}
+
 	flagInst := c.flagSet.Lookup("_auto_conf_files_")
 	if flagInst != nil {
 		tmp := strings.Trim(flagInst.Value.String(), " ")

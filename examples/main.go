@@ -13,5 +13,5 @@ type TestOptions struct {
 func main() {
 	ops := &TestOptions{}
 	// conf_3 inherit from conf_1 and conf_2
-	goconf.MustResolve(ops,"conf_1.toml","conf_1.json","conf_3.toml")
+	goconf.MustResolve(ops, "conf_1.toml", "conf_1.json", "conf_3.toml")
 }
