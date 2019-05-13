@@ -27,7 +27,7 @@ func HasArg(fs *flag.FlagSet, s string) bool {
 	return found
 }
 
-func innserResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]interface{}, tomap map[string]interface{}, autoSet bool, Log func(string)) {
+func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]interface{}, tomap map[string]interface{}, autoSet bool, Log func(string)) {
 	val := reflect.ValueOf(options).Elem()
 	typ := val.Type()
 
@@ -42,7 +42,7 @@ func innserResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]in
 				fieldPtr = reflect.Indirect(val).FieldByName(field.Name)
 			}
 			if !fieldPtr.IsNil() {
-				innserResolve(fieldPtr.Interface(), flagSet, cfg, tomap, autoSet, Log)
+				innerResolve(fieldPtr.Interface(), flagSet, cfg, tomap, autoSet, Log)
 			}
 			continue
 		}

@@ -53,7 +53,7 @@ func (c *Config) log(msg string) {
 // Gen template conf file base on the given struct and save the conf to file.
 func (c *Config) GenTemplate(opts interface{}, fn string) error {
 	tm := make(map[string]interface{})
-	innserResolve(opts, nil, nil, tm, false, c.log)
+	innerResolve(opts, nil, nil, tm, false, c.log)
 	return genTemplate(tm, fn)
 }
 
@@ -75,7 +75,7 @@ func (c *Config) resolve(opts interface{}, files []string) error {
 		return ErrPassInPtr
 	}
 	// auto flag with default value
-	innserResolve(opts, c.flagSet, nil, nil, true, c.log)
+	innerResolve(opts, c.flagSet, nil, nil, true, c.log)
 	if err := c.flagSet.Parse(os.Args[1:]); err != nil {
 		if err != flag.ErrHelp {
 			_, _ = fmt.Fprintf(os.Stderr, "flag: %v\n", err)
@@ -103,7 +103,7 @@ func (c *Config) resolve(opts interface{}, files []string) error {
 		}
 	}
 
-	innserResolve(opts, c.flagSet, c.fileLoader.Data(), nil, false, c.log)
+	innerResolve(opts, c.flagSet, c.fileLoader.Data(), nil, false, c.log)
 	if b, err := json.MarshalIndent(opts, "", "   "); err != nil {
 		errs.Push(err)
 	} else {
