@@ -27,7 +27,7 @@ func HasArg(fs *flag.FlagSet, s string) bool {
 	return found
 }
 
-func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]interface{}, tomap map[string]interface{}, autoSet bool, Log func(string)) {
+func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]interface{}, dstMap map[string]interface{}, autoSet bool, Log func(string)) {
 	val := reflect.ValueOf(options).Elem()
 	typ := val.Type()
 
@@ -42,7 +42,7 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 				fieldPtr = reflect.Indirect(val).FieldByName(field.Name)
 			}
 			if !fieldPtr.IsNil() {
-				innerResolve(fieldPtr.Interface(), flagSet, cfg, tomap, autoSet, Log)
+				innerResolve(fieldPtr.Interface(), flagSet, cfg, dstMap, autoSet, Log)
 			}
 			continue
 		}
@@ -61,7 +61,7 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 		}
 
 		if autoSet {
-			if flagSet.Lookup(flagName) == nil {
+			if flagSet != nil && flagSet.Lookup(flagName) == nil {
 				if defaultVal != "" {
 					v = defaultVal
 				} else {
@@ -91,11 +91,11 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 				Log(fmt.Sprintf("coerce fail: %v for %s (%+v) - %s", v, field.Name, fieldVal, err))
 			}
 			fieldVal.Set(reflect.ValueOf(coerced))
-			if tomap != nil {
+			if dstMap != nil {
 				if err == nil {
-					tomap[flagName] = coerced
+					dstMap[flagName] = coerced
 				} else {
-					tomap[flagName] = v
+					dstMap[flagName] = v
 				}
 			}
 		}
