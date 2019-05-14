@@ -2,6 +2,7 @@ package goconf
 
 import (
 	"fmt"
+	"github.com/timestee/goconf/internal"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -53,13 +54,13 @@ func (c *FileLoader) _load(rdata reflect.Value, files []string, asc bool) (refle
 			return rdata, err
 		} else {
 			c.log(fmt.Sprintf("load: %s", file))
-			tmp = merge(tmp, reflect.ValueOf(data))
+			tmp = internal.Merge(tmp, reflect.ValueOf(data))
 		}
 	}
 	if asc {
-		rdata = merge(rdata, tmp)
+		rdata = internal.Merge(rdata, tmp)
 	} else {
-		rdata = merge(tmp, rdata)
+		rdata = internal.Merge(tmp, rdata)
 	}
 	return rdata, nil
 }
@@ -102,28 +103,4 @@ func (c *FileLoader) __load(file string) (interface{}, error) {
 	}
 
 	return nil, fmt.Errorf("load %s with error %s", file, err.Error())
-}
-
-func mapIndex(mp reflect.Value, index reflect.Value) reflect.Value {
-	v := mp.MapIndex(index)
-	if v.Kind() == reflect.Interface {
-		v = v.Elem()
-	}
-	return v
-}
-
-func merge(v1, v2 reflect.Value) reflect.Value {
-	if v1.Kind() != reflect.Map || v2.Kind() != reflect.Map || !v1.IsValid() {
-		return v2
-	}
-
-	for _, key := range v2.MapKeys() {
-		e1 := mapIndex(v1, key)
-		e2 := mapIndex(v2, key)
-		if e1.Kind() == reflect.Map && e2.Kind() == reflect.Map {
-			e2 = merge(e1, e2)
-		}
-		v1.SetMapIndex(key, e2)
-	}
-	return v1
 }
