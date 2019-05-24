@@ -12,14 +12,8 @@ import (
 )
 
 var (
-	ErrPassInPtr = fmt.Errorf("unsupported type, pass in as ptr")
+	errPassInPtr = fmt.Errorf("unsupported type, pass in as ptr")
 )
-
-func Log(f func(string)) func(c *Config) {
-	return func(c *Config) {
-		c.optionLog = f
-	}
-}
 
 // Config represents a configuration loader
 type Config struct {
@@ -28,6 +22,7 @@ type Config struct {
 	fileLoader *FileLoader
 }
 
+// New Config with name and option struct
 func New(name string, options ...func(*Config)) *Config {
 	c := &Config{}
 	if len(options) > 0 {
@@ -50,17 +45,19 @@ func (c *Config) log(msg string) {
 	}
 }
 
-// Gen template conf file base on the given struct and save the conf to file.
+// GenTemplate Gen template conf file base on the given struct and save the conf to file.
 func (c *Config) GenTemplate(opts interface{}, fn string) error {
 	tm := make(map[string]interface{})
 	innerResolve(opts, nil, nil, tm, false, c.log)
 	return genTemplate(tm, fn)
 }
 
+// Resolve given files, return error if fail
 func (c *Config) Resolve(opts interface{}, files []string) error {
 	return c.resolve(opts, files)
 }
 
+// MustResolve given files, panic if fail
 func (c *Config) MustResolve(opts interface{}, files []string) {
 	if err := c.resolve(opts, files); err != nil {
 		c.log(fmt.Sprintf("Failed in must model err: %s", err.Error()))
@@ -72,7 +69,7 @@ func (c *Config) MustResolve(opts interface{}, files []string) {
 // load configs from struct field's default value, muitiple files and cmdline flags.
 func (c *Config) resolve(opts interface{}, files []string) error {
 	if reflect.ValueOf(opts).Kind() != reflect.Ptr {
-		return ErrPassInPtr
+		return errPassInPtr
 	}
 	// auto flag with default value
 	innerResolve(opts, c.flagSet, nil, nil, true, c.log)
@@ -95,7 +92,7 @@ func (c *Config) resolve(opts interface{}, files []string) error {
 	}
 
 	c.log(fmt.Sprintf("file:  %v", files))
-	errs := ErrArray{ErrorFormat: ErrArrayDotFormatFunc}
+	errs := errArray{ErrorFormat: errArrayDotFormatFunc}
 	if len(files) > 0 {
 		if err := c.fileLoader.Load(files); err != nil {
 			c.log(fmt.Sprintf("Error with %s", err.Error()))

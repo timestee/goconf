@@ -7,9 +7,9 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type DecodeFunc func([]byte, interface{}) error
+type decodeFunc func([]byte, interface{}) error
 
-var DecodeFuncMap = map[string]DecodeFunc{
+var decodeFuncMap = map[string]decodeFunc{
 	".toml": func(bytes []byte, data interface{}) error {
 		_, err := toml.Decode(string(bytes), data)
 		return err
@@ -19,9 +19,9 @@ var DecodeFuncMap = map[string]DecodeFunc{
 	},
 }
 
-type EncodeFunc func(opts interface{}) (string, error)
+type encodeFunc func(opts interface{}) (string, error)
 
-var EncodeFuncMap = map[string]EncodeFunc{
+var encodeFuncMap = map[string]encodeFunc{
 	".toml": func(opts interface{}) (string, error) {
 		var by bytes.Buffer
 		encoder := toml.NewEncoder(&by)

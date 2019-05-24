@@ -23,7 +23,7 @@ func genTemplate(opts interface{}, fn string) error {
 		return err
 	}
 	ext := strings.ToLower(filepath.Ext(fn))
-	if encoder, ok := EncodeFuncMap[ext]; ok {
+	if encoder, ok := encodeFuncMap[ext]; ok {
 		ret, err := encoder(opts)
 		if err != nil {
 			return err
@@ -70,9 +70,9 @@ func (c *FileLoader) __load(file string) (interface{}, error) {
 		return nil, err
 	}
 	ext := strings.ToLower(filepath.Ext(file))
-	var unmarshal DecodeFunc
+	var unmarshal decodeFunc
 	var ok bool
-	if unmarshal, ok = DecodeFuncMap[ext]; !ok {
+	if unmarshal, ok = decodeFuncMap[ext]; !ok {
 		return nil, fmt.Errorf("file format not supported: %s %s", file, filepath.Ext(file))
 	}
 

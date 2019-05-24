@@ -17,7 +17,7 @@ func snakeCase(str string) string {
 	return strings.ToLower(snake)
 }
 
-func HasArg(fs *flag.FlagSet, s string) bool {
+func hasArg(fs *flag.FlagSet, s string) bool {
 	var found bool
 	fs.Visit(func(flag *flag.Flag) {
 		if flag.Name == s {
@@ -75,7 +75,7 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 			}
 		} else {
 			// resolve the flags according to priority
-			if flagSet != nil && HasArg(flagSet, flagName) { // command line flag value
+			if flagSet != nil && hasArg(flagSet, flagName) { // command line flag value
 				flagInst := flagSet.Lookup(flagName)
 				v = flagInst.Value.String()
 			} else if cfgVal, ok := cfg[cfgName]; ok { // config file value
