@@ -19,7 +19,7 @@ var (
 type Config struct {
 	optionLog  func(string)
 	flagSet    *flag.FlagSet
-	fileLoader *FileLoader
+	fileLoader *fileLoader
 }
 
 // New Config with name and option struct
@@ -32,7 +32,7 @@ func New(name string, options ...func(*Config)) *Config {
 	}
 	c.flagSet = flag.NewFlagSet(name, flag.ContinueOnError)
 	c.flagSet.SetOutput(ioutil.Discard)
-	c.fileLoader = &FileLoader{log: c.log}
+	c.fileLoader = &fileLoader{log: c.log}
 	return c
 }
 

@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type FileLoader struct {
+type fileLoader struct {
 	log     func(string)
 	data    reflect.Value
 	infoLog func(string)
@@ -34,22 +34,22 @@ func genTemplate(opts interface{}, fn string) error {
 	return fmt.Errorf("file format not supported: " + filepath.Ext(fn))
 }
 
-func (c *FileLoader) Data() map[string]interface{} {
+func (c *fileLoader) Data() map[string]interface{} {
 	if c.data.IsValid() {
 		return c.data.Interface().(map[string]interface{})
 	}
 	return nil
 }
 
-func (c *FileLoader) Load(files []string) (err error) {
-	c.data, err = c._load(c.data, files, true)
+func (c *fileLoader) Load(files []string) (err error) {
+	c.data, err = c._LoadFiles(c.data, files, true)
 	return
 }
 
-func (c *FileLoader) _load(rdata reflect.Value, files []string, asc bool) (reflect.Value, error) {
+func (c *fileLoader) _LoadFiles(rdata reflect.Value, files []string, asc bool) (reflect.Value, error) {
 	var tmp reflect.Value
 	for _, file := range files {
-		if data, err := c.__load(file); err != nil {
+		if data, err := c._LoadFile(file); err != nil {
 			return rdata, err
 		} else {
 			c.log(fmt.Sprintf("load: %s", file))
@@ -64,7 +64,7 @@ func (c *FileLoader) _load(rdata reflect.Value, files []string, asc bool) (refle
 	return rdata, nil
 }
 
-func (c *FileLoader) __load(file string) (interface{}, error) {
+func (c *fileLoader) _LoadFile(file string) (interface{}, error) {
 	bytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, err
@@ -88,14 +88,14 @@ func (c *FileLoader) __load(file string) (interface{}, error) {
 		switch inherit.(type) {
 		case string:
 			name := basePath + inherit.(string)
-			ret, err = c._load(reflect.ValueOf(data), []string{name}, false)
+			ret, err = c._LoadFiles(reflect.ValueOf(data), []string{name}, false)
 			return ret.Interface(), err
 		case []interface{}:
 			var files []string
 			for _, fi := range inherit.([]interface{}) {
 				files = append(files, basePath+fi.(string))
 			}
-			ret, err = c._load(reflect.ValueOf(data), files, false)
+			ret, err = c._LoadFiles(reflect.ValueOf(data), files, false)
 			return ret.Interface(), err
 		}
 		return data, err
