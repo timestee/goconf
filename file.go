@@ -49,7 +49,7 @@ func (c *fileLoader) Load(files []string) (err error) {
 func (c *fileLoader) _LoadFiles(rdata reflect.Value, files []string, asc bool) (reflect.Value, error) {
 	var tmp reflect.Value
 	for _, file := range files {
-		data, err := c._LoadFile(file);
+		data, err := c._LoadFile(file)
 		if err != nil {
 			return rdata, err
 		}
