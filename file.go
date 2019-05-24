@@ -49,12 +49,12 @@ func (c *fileLoader) Load(files []string) (err error) {
 func (c *fileLoader) _LoadFiles(rdata reflect.Value, files []string, asc bool) (reflect.Value, error) {
 	var tmp reflect.Value
 	for _, file := range files {
-		if data, err := c._LoadFile(file); err != nil {
+		data, err := c._LoadFile(file);
+		if err != nil {
 			return rdata, err
-		} else {
-			c.log(fmt.Sprintf("load: %s", file))
-			tmp = merge(tmp, reflect.ValueOf(data))
 		}
+		c.log(fmt.Sprintf("load: %s", file))
+		tmp = merge(tmp, reflect.ValueOf(data))
 	}
 	if asc {
 		rdata = merge(rdata, tmp)
