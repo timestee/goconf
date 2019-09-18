@@ -8,6 +8,7 @@ type testOptions struct {
 	Hosts       []string `flag:"hosts" cfg:"hosts" default:"127.0.0.0,127.0.0.1"`
 	LogLevel    int      `default:"3"`
 	BoolVar     bool     `default:"false"`
+	IntSlice    []int64  `cfg:"int_slice"`
 }
 
 func main() {
