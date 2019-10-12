@@ -13,23 +13,24 @@ import (
 
 var (
 	errPassInPtr = fmt.Errorf("unsupported type, pass in as ptr")
+	globalLogger = func(s string) { log.Print(s) }
 )
+
+//SetGlobalLogger set the global logger func, if nil, lib will keep silent
+func SetGlobalLogger(lf func(string)) {
+	globalLogger = lf
+}
 
 // Config represents a configuration loader
 type Config struct {
-	optionLog  func(string)
 	flagSet    *flag.FlagSet
 	fileLoader *fileLoader
 }
 
 // New Config with name and option struct
-func New(name string, options ...func(*Config)) *Config {
+func New(name string) *Config {
 	c := &Config{}
-	if len(options) > 0 {
-		for _, option := range options {
-			option(c)
-		}
-	}
+
 	c.flagSet = flag.NewFlagSet(name, flag.ContinueOnError)
 	c.flagSet.SetOutput(ioutil.Discard)
 	c.fileLoader = &fileLoader{log: c.log}
@@ -37,11 +38,9 @@ func New(name string, options ...func(*Config)) *Config {
 }
 
 func (c *Config) log(msg string) {
-	msg = fmt.Sprintf("[goconf]: %s", msg)
-	if c.optionLog == nil {
-		log.Print(msg)
-	} else {
-		c.optionLog(msg)
+	msg = fmt.Sprintf("goconf : %s", msg)
+	if globalLogger != nil {
+		globalLogger(msg)
 	}
 }
 
