@@ -113,6 +113,35 @@ func coerceFloat64Slice(v interface{}) ([]float64, error) {
 	return tmp, nil
 }
 
+func coerceInt64Slice(v interface{}) ([]int64, error) {
+	var tmp []int64
+	switch v.(type) {
+	case string:
+		for _, s := range strings.Split(v.(string), ",") {
+			f, err := strconv.ParseInt(strings.TrimSpace(s), 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			tmp = append(tmp, f)
+		}
+	case []interface{}:
+		for _, fi := range v.([]interface{}) {
+			tmp = append(tmp, fi.(int64))
+		}
+	case []string:
+		for _, s := range v.([]string) {
+			f, err := strconv.ParseInt(strings.TrimSpace(s), 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			tmp = append(tmp, f)
+		}
+	case []int64:
+		tmp = v.([]int64)
+	}
+	return tmp, nil
+}
+
 func coerceString(v interface{}) (string, error) {
 	switch v.(type) {
 	case string:
@@ -248,6 +277,17 @@ func _coerce(v interface{}, opt interface{}, arg string, fs *flag.FlagSet, name 
 			return nil, fmt.Errorf("type not support []float64")
 		}
 		return cv, nil
+	case []int64:
+		cv, err := coerceInt64Slice(v)
+		if err != nil {
+			return nil, err
+		}
+		if fs != nil {
+			return nil, fmt.Errorf("type not support []int64")
+		}
+		return cv, nil
+
 	}
+
 	return nil, fmt.Errorf("type not support %T", v)
 }
