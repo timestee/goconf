@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.org/timestee/goconf.svg?branch=master)](https://travis-ci.org/timestee/goconf)
 [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/timestee/goconf)
 [![GoDoc](https://godoc.org/github.com/timestee/goconf?status.svg)](https://godoc.org/github.com/timestee/goconf)
-[![Go Report Card](https://goreportcard.com/badge/github.com/timestee/goconf)](https://goreportcard.com/report/github.com/timestee/goconf)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/timestee/goconf)](https://goreportcard.com/report/github.com/timestee/goconf)[![Sourcegraph](https://sourcegraph.com/github.com/timestee/goconf/-/badge.svg)](https://sourcegraph.com/github.com/timestee/goconf?badge)
 ## Overview
 
 * Read configuration automatically based on the given struct's field name.
