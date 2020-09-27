@@ -90,7 +90,9 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 			if err != nil {
 				Log(fmt.Sprintf("coerce fail: %v for %s (%+v) - %s", v, field.Name, fieldVal, err))
 			}
-			fieldVal.Set(reflect.ValueOf(coerced))
+			if coerced != nil {
+				fieldVal.Set(reflect.ValueOf(coerced))
+			}
 			if dstMap != nil {
 				if err == nil {
 					dstMap[flagName] = coerced
