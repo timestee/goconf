@@ -3,6 +3,7 @@ package goconf
 import (
 	"flag"
 	"fmt"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -78,6 +79,8 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 			if flagSet != nil && hasArg(flagSet, flagName) { // command line flag value
 				flagInst := flagSet.Lookup(flagName)
 				v = flagInst.Value.String()
+			} else if envVal,ok := os.LookupEnv(flagName); ok { // env value
+				v = envVal
 			} else if cfgVal, ok := cfg[cfgName]; ok { // config file value
 				v = cfgVal
 			} else if defaultVal != "" { // default value
