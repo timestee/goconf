@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
@@ -32,7 +31,7 @@ func New(name string) *Config {
 	c := &Config{}
 
 	c.flagSet = flag.CommandLine //flag.NewFlagSet(name, flag.ContinueOnError)
-	c.flagSet.SetOutput(ioutil.Discard)
+	// c.flagSet.SetOutput(ioutil.Discard)
 	c.fileLoader = &fileLoader{log: c.log}
 	return c
 }
