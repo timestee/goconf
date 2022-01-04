@@ -1,3 +1,5 @@
+[Archived] This repository has been archived,See https://github.com/sandwich-go/xconf instead.
+
 # goconf 
 [![Build Status](https://travis-ci.org/timestee/goconf.svg?branch=master)](https://travis-ci.org/timestee/goconf)
 [![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/timestee/goconf)
