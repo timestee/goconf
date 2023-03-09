@@ -155,9 +155,11 @@ func coerceInt64Slice(v interface{}) ([]int64, error) {
 }
 
 func coerceString(v interface{}) (string, error) {
-	switch v.(type) {
+	switch vv := v.(type) {
 	case string:
-		return v.(string), nil
+		return vv, nil
+	case interface{String()string}:
+		return vv.String(), nil
 	}
 	return fmt.Sprintf("%s", v), nil
 }
@@ -298,7 +300,15 @@ func _coerce(v interface{}, opt interface{}, arg string, fs *flag.FlagSet, name 
 			return nil, fmt.Errorf("type not support []int64")
 		}
 		return cv, nil
-
+	case interface{String()string}:
+		s, err := coerceString(v)
+		if err != nil {
+			return nil, err
+		}
+		if fs != nil {
+			fs.String(name, s, "")
+		}
+		return s, nil
 	}
 
 	return nil, fmt.Errorf("type not support %T", v)

@@ -99,7 +99,19 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 				Log(fmt.Sprintf("coerce fail: %v for %s (%+v) - %s", v, field.Name, fieldVal, err))
 			}
 			if coerced != nil {
-				fieldVal.Set(reflect.ValueOf(coerced))
+				func(){
+					defer func() {
+						if reason := recover(); reason != nil {
+							switch value :=coerced.(type) {
+							case string:
+								fieldVal.SetString(value)
+							default:
+								panic(fmt.Errorf("%v", reason))
+							}
+						}
+					}()
+					fieldVal.Set(reflect.ValueOf(coerced))
+				}()
 			}
 			if dstMap != nil {
 				if err == nil {
