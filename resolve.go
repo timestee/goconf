@@ -3,6 +3,7 @@ package goconf
 import (
 	"flag"
 	"fmt"
+	"go/token"
 	"os"
 	"reflect"
 	"regexp"
@@ -48,6 +49,10 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 			continue
 		}
 
+		if !token.IsExported(field.Name) {
+			continue
+		}
+
 		var v interface{}
 		flagName := field.Tag.Get("flag")
 		cfgName := field.Tag.Get("cfg")
@@ -79,7 +84,7 @@ func innerResolve(options interface{}, flagSet *flag.FlagSet, cfg map[string]int
 			if flagSet != nil && hasArg(flagSet, flagName) { // command line flag value
 				flagInst := flagSet.Lookup(flagName)
 				v = flagInst.Value.String()
-			} else if envVal,ok := os.LookupEnv(flagName); ok { // env value
+			} else if envVal, ok := os.LookupEnv(flagName); ok { // env value
 				v = envVal
 			} else if cfgVal, ok := cfg[cfgName]; ok { // config file value
 				v = cfgVal
